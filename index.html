@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>इश्क़ सफ़र – A Musical Journey</title>
+  <meta name="description"
+    content="– A nostalgic, cinematic Indian music listening experience. Immerse yourself in the warmth of Satrang Music." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Serif+Devanagari:wght@400;700;900&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ============================================================
+       BACKGROUND LAYER
+    ============================================================ */
+    #bg {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      background-image: url('images/background.png');
+      background-size: cover;
+      background-position: center center;
+      background-repeat: no-repeat;
+    }
+
+    /* Subtle dark vignette to help readability without killing the art */
+    #bg::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at center,
+          rgba(0, 0, 0, 0.08) 0%,
+          rgba(0, 0, 0, 0.38) 100%);
+    }
+
+    /* ============================================================
+       MAIN WRAPPER
+    ============================================================ */
+    #app {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* ============================================================
+       TOP HEADER
+    ============================================================ */
+    #header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 20;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 32px;
+      pointer-events: none;
+    }
+
+    #header>* {
+      pointer-events: auto;
+    }
+
+    /* --- Clock --- */
+    #clock {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.90);
+      letter-spacing: 0.04em;
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.55);
+      min-width: 90px;
+    }
+
+    /* --- Online indicator --- */
+    #online-badge {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border-radius: 40px;
+      padding: 6px 14px 6px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.10);
+    }
+
+    #online-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #00e879;
+      box-shadow: 0 0 8px 2px rgba(0, 232, 121, 0.70);
+      animation: pulse-dot 2.2s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulse-dot {
+
+      0%,
+      100% {
+        box-shadow: 0 0 8px 2px rgba(0, 232, 121, 0.70);
+      }
+
+      50% {
+        box-shadow: 0 0 14px 4px rgba(0, 232, 121, 0.95);
+      }
+    }
+
+    #online-text {
+      font-size: 13px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.88);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+    }
+
+    /* --- External links --- */
+    #ext-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .ext-link {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      text-decoration: none;
+      color: rgba(255, 255, 255, 0.88);
+      background: rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 40px;
+      padding: 6px 13px 6px 8px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: background 0.22s, transform 0.18s, border-color 0.22s;
+    }
+
+    .ext-link:hover {
+      background: rgba(0, 0, 0, 0.46);
+      border-color: rgba(255, 255, 255, 0.28);
+      transform: translateY(-1px);
+    }
+
+    .ext-link-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .spotify-icon {
+      background: #1DB954;
+    }
+
+    .ytmusic-icon {
+      background: #FF0000;
+    }
+
+    .ext-link-arrow {
+      font-size: 11px;
+      opacity: 0.65;
+    }
+
+    /* ============================================================
+       MAIN TITLE (Devanagari)
+    ============================================================ */
+    #main-title {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -62%);
+      z-index: 15;
+      text-align: center;
+      pointer-events: none;
+      line-height: 0.92;
+    }
+
+    #main-title h1 {
+      font-family: 'Noto Serif Devanagari', 'Nirmala UI', 'Mangal', serif;
+      font-weight: 900;
+      color: #ffffff;
+      text-shadow:
+        0 2px 0px rgba(120, 40, 10, 0.6),
+        0 4px 18px rgba(0, 0, 0, 0.55),
+        0 8px 40px rgba(0, 0, 0, 0.38);
+      font-size: clamp(80px, 14vw, 148px);
+      letter-spacing: -0.01em;
+    }
+
+    /* ============================================================
+       MUSIC PLAYER
+    ============================================================ */
+    #player-wrap {
+      position: absolute;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 30;
+      width: 775px;
+      height: 142px;
+    }
+
+    #player {
+      width: 100%;
+      height: 100%;
+      background:
+        linear-gradient(135deg,
+          rgba(165, 87, 61, 0.97) 0%,
+          rgba(142, 70, 49, 0.97) 55%,
+          rgba(132, 63, 45, 0.97) 100%);
+      border-radius: 72px;
+      box-shadow:
+        0 16px 42px rgba(0, 0, 0, 0.36),
+        0 5px 14px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
+      padding: 15px 22px 15px 8px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* --- Album Art --- */
+    #album-art-wrap {
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    #album-art {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      border: 3px solid rgba(255, 255, 255, 0.18);
+      box-shadow:
+        0 4px 18px rgba(0, 0, 0, 0.40),
+        0 0 0 1px rgba(0, 0, 0, 0.12);
+      animation: albumSpin 7s linear infinite;
+      animation-play-state: paused;
+    }
+
+    @keyframes albumSpin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    #album-art.spinning {
+      animation-play-state: running;
+    }
+
+    #album-art-wrap::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.75);
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0.35);
+      pointer-events: none;
+    }
+
+    .linkedin-icon {
+      background: #0A66C2 !important;
+    }
+
+    /* --- Player Content --- */
+    #player-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 10px;
+      min-width: 0;
+      height: 100%;
+      padding: 2px 0;
+    }
+
+    #song-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    #song-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.01em;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+    }
+
+    #song-artist {
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.70);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      letter-spacing: 0.015em;
+    }
+
+    /* --- Progress Row --- */
+    #progress-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: 4px 17px;
+      align-items: center;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .time-label {
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.72);
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+      min-width: 32px;
+    }
+
+    #time-current,
+    #time-total {
+      font-size: 12px;
+      line-height: 17px;
+    }
+
+    #time-current {
+      grid-column: 1;
+      grid-row: 2;
+      text-align: left;
+      min-width: 0;
+    }
+
+    #time-total {
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      transform: translateX(0);
+      text-align: left;
+      margin-left: 0;
+    }
+
+    #progress-bar-wrap {
+      flex: 1;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.22);
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      overflow: visible;
+    }
+
+    #progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #ffe0b2, #ffb74d);
+      border-radius: 4px;
+      transition: width 0.25s linear;
+      position: relative;
+    }
+
+    #progress-bar-fill::after {
+      content: '';
+      position: absolute;
+      right: -5px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #fff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+
+    #progress-bar-wrap:hover #progress-bar-fill::after {
+      opacity: 1;
+    }
+
+
+    /* --- File Fallback --- */
+    #file-fallback {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(60, 20, 10, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      padding: 12px 18px;
+      text-align: center;
+      white-space: nowrap;
+      backdrop-filter: blur(8px);
+    }
+
+    #file-fallback p {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.80);
+      margin-bottom: 8px;
+    }
+
+    #file-input {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.80);
+      cursor: pointer;
+    }
+
+    /* --- Error message --- */
+    #error-msg {
+      display: none;
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(90, 20, 20, 0.92);
+      border-radius: 10px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: #ffcccc;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .time-readout {
+      position: relative;
+      width: 100%;
+      height: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .time-readout .time-label {
+      min-width: 0;
+    }
+
+    #time-total {
+      position: static;
+      transform: none;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    #controls-row {
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      width: 132px;
+    }
+
+    .ctrl-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.18s, opacity 0.18s;
+      color: rgba(255, 255, 255, 0.88);
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .skip-btn {
+      width: 30px;
+      height: 40px;
+      opacity: 0.78;
+    }
+
+    .skip-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    #play-btn {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28), 0 1px 4px rgba(0, 0, 0, 0.16);
+      color: #8a3b22;
+    }
+
+    #play-btn svg {
+      width: 25px;
+      height: 25px;
+      fill: #8a3b22;
+    }
+
+    /* ============================================================
+       RESPONSIVE
+    ============================================================ */
+    @media (max-width: 900px) {
+      #header {
+        padding: 14px 18px;
+      }
+
+      #clock {
+        font-size: 13px;
+      }
+
+      #online-text {
+        font-size: 12px;
+      }
+
+      .ext-link {
+        font-size: 12px;
+        padding: 5px 10px 5px 6px;
+        gap: 5px;
+      }
+
+      .ext-link-icon {
+        width: 20px;
+        height: 20px;
+      }
+
+      #main-title h1 {
+        font-size: clamp(68px, 18vw, 110px);
+      }
+
+      #player-wrap {
+        bottom: 24px;
+        width: min(775px, calc(100vw - 28px));
+        height: 122px;
+      }
+
+      #player {
+        padding: 12px 16px 12px 10px;
+        border-radius: 62px;
+        gap: 12px;
+      }
+
+      #album-art {
+        width: 82px;
+        height: 82px;
+      }
+
+      #song-title {
+        font-size: 15px;
+      }
+
+      #song-artist {
+        font-size: 12px;
+      }
+
+      #controls-row {
+        width: 112px;
+        gap: 8px;
+      }
+
+      #play-btn {
+        width: 54px;
+        height: 54px;
+      }
+
+      #play-btn svg {
+        width: 22px;
+        height: 22px;
+      }
+
+      .skip-btn {
+        width: 26px;
+        height: 36px;
+      }
+
+      .skip-btn svg {
+        width: 19px;
+        height: 19px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      #header {
+        padding: 10px 14px;
+      }
+
+      #main-title {
+        transform: translate(-50%, -58%);
+      }
+
+      #online-badge {
+        padding: 5px 10px 5px 8px;
+      }
+
+      .ext-link .link-label {
+        display: none;
+      }
+
+      .ext-link {
+        padding: 5px 8px;
+      }
+
+      #player-wrap {
+        bottom: 16px;
+        height: 104px;
+      }
+
+      #player {
+        padding: 10px 12px 10px 8px;
+        border-radius: 52px;
+        gap: 9px;
+      }
+
+      #album-art {
+        width: 70px;
+        height: 70px;
+      }
+
+      #controls-row {
+        width: 92px;
+        gap: 5px;
+      }
+
+      #play-btn {
+        width: 46px;
+        height: 46px;
+      }
+
+      #play-btn svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .skip-btn {
+        width: 22px;
+        height: 30px;
+      }
+
+      .skip-btn svg {
+        width: 17px;
+        height: 17px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Background -->
+  <div id="bg" aria-hidden="true"></div>
+
+  <!-- App -->
+  <div id="app" role="main">
+
+    <!-- TOP HEADER -->
+    <header id="header" role="banner">
+
+      <!-- Left: Real-time Clock -->
+      <div id="clock" aria-label="Current time" aria-live="polite">12:00 AM</div>
+
+      <!-- Center: Live Online Counter
+         NOTE: This is a FRONTEND SIMULATION ONLY.
+         A real global visitor count requires a backend service
+         (e.g., WebSocket, Firebase Realtime DB, server-sent events).
+         This number randomly fluctuates between 27-34 to look organic. -->
+      <div id="online-badge" role="status" aria-label="Online listeners">
+        <span id="online-dot" aria-hidden="true"></span>
+        <span id="online-text">31 online</span>
+      </div>
+
+      <!-- Right: External Links -->
+      <!-- <div id="ext-links">
+        <a id="spotify-link" class="ext-link"
+          href="https://open.spotify.com/search/Mujhse%20Mohabbat%20Ka%20Izhaar%20Karta" target="_blank"
+          rel="noopener noreferrer" aria-label="Search on Spotify (opens in new tab)">
+          <span class="ext-link-icon spotify-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+              <path
+                d="M12 0C5.374 0 0 5.373 0 12c0 6.628 5.374 12 12 12 6.628 0 12-5.372 12-12 0-6.627-5.372-12-12-12zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z" />
+            </svg>
+          </span>
+          <span class="link-label">Spotify</span>
+          <span class="ext-link-arrow" aria-hidden="true">↗</span>
+        </a> -->
+
+      <!-- <a id="ytmusic-link" class="ext-link"
+          href="https://music.youtube.com/search?q=Mujhse%20Mohabbat%20Ka%20Izhaar%20Karta" target="_blank"
+          rel="noopener noreferrer" aria-label="Search on YouTube Music (opens in new tab)">
+          <span class="ext-link-icon Linkdin-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+              <path
+                d="M12 0C5.376 0 0 5.376 0 12s5.376 12 12 12 12-5.376 12-12S18.624 0 12 0zm-2 16.5v-9l7 4.5-7 4.5z" />
+            </svg>
+          </span>
+          <span class="link-label">YT Music</span>
+          <span class="ext-link-arrow" aria-hidden="true">↗</span>
+        </a> -->
+
+
+      <a id="linkedin-link" class="ext-link" href="https://www.linkedin.com/in/amitprajapati111/" target="_blank"
+        rel="noopener noreferrer" aria-label="Visit LinkedIn (opens in new tab)">
+
+        <span class="ext-link-icon linkedin-icon" aria-hidden="true">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="white">
+            <path
+              d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.13 1.44-2.13 2.94v5.67H9.35V8.98h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.3zM5.34 7.42a2.07 2.07 0 1 1 0-4.14 2.07 2.07 0 0 1 0 4.14zM3.56 20.45h3.56V8.98H3.56v11.47zM22.22 0H1.78C.8 0 0 .8 0 1.78v20.44C0 23.2.8 24 1.78 24h20.44c.98 0 1.78-.8 1.78-1.78V1.78C24 .8 23.2 0 22.22 0z" />
+          </svg>
+        </span>
+
+        <span class="link-label">LinkedIn</span>
+        <span class="ext-link-arrow" aria-hidden="true">↗</span>
+      </a>
+  </div>
+
+  </header>
+
+  <!-- MAIN TITLE -->
+  <div id="main-title" aria-label="इश्क़ सफ़र">
+    <!-- <h1>इश्क़<br>सफ़र</h1> -->
+  </div>
+
+  <!-- MUSIC PLAYER -->
+  <div id="player-wrap">
+
+    <div id="error-msg" role="alert" aria-live="assertive"></div>
+
+    <div id="file-fallback">
+      <p>No audio file found. Choose one from your device:</p>
+      <input id="file-input" type="file" accept="audio/*" aria-label="Choose an audio file to play" />
+    </div>
+
+    <div id="player" role="region" aria-label="Music player">
+
+      <!-- Album Art -->
+      <div id="album-art-wrap" aria-hidden="true">
+        <img id="album-art" src="images/cover-01.jpg" alt="Album art" draggable="false" />
+      </div>
+
+      <!-- Content -->
+      <div id="player-content">
+
+        <div id="song-info">
+          <div id="song-title">Mujhse Mohabbat Ka Izhaar Karta</div>
+          <div id="song-artist">Satrang Music Official</div>
+        </div>
+
+        <div id="progress-row">
+          <div id="progress-bar-wrap" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100"
+            aria-valuenow="0" tabindex="0">
+            <div id="progress-bar-fill"></div>
+          </div>
+          <div class="time-readout">
+            <span id="time-current" class="time-label" aria-label="Current time">0:00</span>
+            <span id="time-total" class="time-label" aria-label="Total duration">0:00</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div id="controls-row">
+        <button id="prev-btn" class="ctrl-btn skip-btn" aria-label="Previous song">
+          <svg viewBox="0 0 24 24">
+            <path d="M6 6h2v12H6zm3.5 6 8.5 6V6z" />
+          </svg>
+        </button>
+
+        <button id="play-btn" class="ctrl-btn" aria-label="Play">
+          <svg id="play-icon" viewBox="0 0 24 24">
+            <path d="M8 5v14l11-7z" />
+          </svg>
+          <svg id="pause-icon" viewBox="0 0 24 24" style="display:none;">
+            <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+          </svg>
+        </button>
+
+        <button id="next-btn" class="ctrl-btn skip-btn" aria-label="Next song">
+          <svg viewBox="0 0 24 24">
+            <path d="M6 18l8.5-6L6 6v12zM16 6h2v12h-2z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- HTML5 Audio Engine -->
+  <audio id="audio" preload="metadata"></audio>
+
+  <script>
+    'use strict';
+
+    /* ==========================================================
+       CONFIGURATION
+    ========================================================== */
+    const CONFIG = {
+      defaultTrack: 0,
+      spotifySearch: 'https://open.spotify.com/search/Mujhse%20Mohabbat%20Ka%20Izhaar%20Karta',
+      ytMusicSearch: 'https://music.youtube.com/search?q=Mujhse%20Mohabbat%20Ka%20Izhaar%20Karta',
+      onlineRange: { min: 27, max: 34 },
+      onlineInterval: 4200,
+      clockInterval: 1000,
+    };
+
+    /* ==========================================================
+       PLAYLIST
+       Add more tracks here. Each needs: title, artist, src, thumbnail.
+    ========================================================== */
+    const playlist = [
+      {
+        title: "Kitna Haseen Chehra (From _Dilwale_)",
+        artist: "Satrang Music Official",
+        src: "audio/20. Kitna Haseen Chehra (From _Dilwale_).mp3",
+        thumbnail: "images/1.jpg"
+      },
+
+      {
+        title: "Tujhko Na Dekhun (From _Jaanwar_)",
+        artist: "Kumar Sanu",
+        src: "audio/21. Tujhko Na Dekhun (From _Jaanwar_).mp3",
+        thumbnail: "images/2.jpg"
+      },
+
+      {
+        title: "Tum Se Achcha Kaun Hai Chand Tare Phool",
+        artist: "Kumar Sanu, Alka Yagnik",
+        src: "audio/22. Tum Se Achcha Kaun Hai Chand Tare Phool.mp3",
+        thumbnail: "images/3.jpg"
+      },
+
+      {
+        title: "Tum Dil Ki Dhadkan Mein (From _Dhadkan_)",
+        artist: "Kumar Sanu",
+        src: "audio/23. Tum Dil Ki Dhadkan Mein (From _Dhadkan_).mp3",
+        thumbnail: "images/4.jpg"
+      },
+
+      {
+        title: "Sab Kuchh Bhula Diya (Female)",
+        artist: "Kumar Sanu",
+        src: "audio/25. Sab Kuchh Bhula Diya (Female).mp3",
+        thumbnail: "images/5.jpg"
+      },
+
+      {
+        title: "Dheere Dheere Pyar Ko",
+        artist: "Kumar Sanu",
+        src: "audio/26. Dheere Dheere Pyar Ko.mp3",
+        thumbnail: "images/6.jpg"
+      },
+
+      {
+        title: "Jeeye to Jeeye Kaise",
+        artist: "Kumar Sanu, Alka Yagnik",
+        src: "audio/28. Jeeye to Jeeye Kaise.mp3",
+        thumbnail: "images/7.jpg"
+      },
+
+      {
+        title: "Hum Laakh Chupaye",
+        artist: "Kumar Sanu, Anuradha Paudwal",
+        src: "audio/29. Hum Laakh Chupaye.mp3",
+        thumbnail: "images/8.jpg"
+      },
+
+      {
+        title: "Nahin Yeh Ho Nahin Sakta",
+        artist: "Kumar Sanu, Lata Mangeshkar",
+        src: "audio/30. Nahin Yeh Ho Nahin Sakta.mp3",
+        thumbnail: "images/9.jpg"
+      },
+
+      {
+        title: "Kahin Mujhe Pyar Hua Toh Nahin",
+        artist: "Anuradha Paudwal",
+        src: "audio/31. Kahin Mujhe Pyar Hua Toh Nahin.mp3",
+        thumbnail: "images/10.jpg"
+      },
+
+      {
+        title: "Tera Naam Liya",
+        artist: "Kumar Sanu",
+        src: "audio/32. Tera Naam Liya.mp3",
+        thumbnail: "images/11.jpg"
+      },
+
+      {
+        title: "Kitna Pyaara Tujhe Rabne Banaya",
+        artist: "Kumar Sanu",
+        src: "audio/33. Kitna Pyaara Tujhe Rabne Banaya.mp3",
+        thumbnail: "images/12.jpg"
+      },
+
+      {
+        title: "Hum Pyaar Hai Tumhare",
+        artist: "Shaan",
+        src: "audio/34. Hum Pyaar Hai Tumhare.mp3",
+        thumbnail: "images/13.jpg"
+      },
+
+      {
+        title: "Ek Ladki Ko Dekha",
+        artist: "Udit Narayan",
+        src: "audio/35. Ek Ladki Ko Dekha.mp3",
+        thumbnail: "images/14.jpg"
+      }
+    ];
+
+    /* ==========================================================
+       STATE
+    ========================================================== */
+    let currentIndex = CONFIG.defaultTrack;
+    let isPlaying = false;
+    let audioFailed = false;
+    let onlineCount = 31;
+
+    /* ==========================================================
+       DOM
+    ========================================================== */
+    const audio = document.getElementById('audio');
+    const albumArt = document.getElementById('album-art');
+    const songTitleEl = document.getElementById('song-title');
+    const songArtistEl = document.getElementById('song-artist');
+    const timeCurrent = document.getElementById('time-current');
+    const timeTotal = document.getElementById('time-total');
+    const progressWrap = document.getElementById('progress-bar-wrap');
+    const progressFill = document.getElementById('progress-bar-fill');
+    const playBtn = document.getElementById('play-btn');
+    const playIcon = document.getElementById('play-icon');
+    const pauseIcon = document.getElementById('pause-icon');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const clockEl = document.getElementById('clock');
+    const onlineText = document.getElementById('online-text');
+    const fileFallback = document.getElementById('file-fallback');
+    const fileInput = document.getElementById('file-input');
+    const errorMsg = document.getElementById('error-msg');
+
+    /* ==========================================================
+       UTILITIES
+    ========================================================== */
+    function formatTime(secs) {
+      if (!isFinite(secs) || isNaN(secs)) return '0:00';
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60);
+      return `${m}:${s < 10 ? '0' : ''}${s}`;
+    }
+
+    /* ==========================================================
+       CLOCK
+    ========================================================== */
+    function updateClock() {
+      const now = new Date();
+      let h = now.getHours();
+      const min = now.getMinutes();
+      const ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+      clockEl.textContent = `${h}:${min < 10 ? '0' : ''}${min} ${ampm}`;
+    }
+
+    /* ==========================================================
+       ONLINE COUNT SIMULATION
+       ⚠️  FRONTEND SIMULATION ONLY — not a real visitor count.
+           Actual global counts need a backend (WebSocket / Firebase).
+    ========================================================== */
+    function updateOnlineCount() {
+      const { min, max } = CONFIG.onlineRange;
+      const delta = Math.random() < 0.5 ? -1 : 1;
+      onlineCount = Math.min(max, Math.max(min, onlineCount + delta));
+      onlineText.textContent = `${onlineCount} online`;
+    }
+
+    /* ==========================================================
+       LOAD TRACK
+    ========================================================== */
+    function loadTrack(index) {
+      const track = playlist[index];
+      if (!track) return;
+
+      audioFailed = false;
+      hideError();
+
+      songTitleEl.textContent = track.title;
+      songArtistEl.textContent = track.artist;
+      albumArt.src = track.thumbnail;
+      albumArt.alt = `${track.title} – album art`;
+
+      progressFill.style.width = '0%';
+      progressWrap.setAttribute('aria-valuenow', 0);
+      timeCurrent.textContent = '0:00';
+      timeTotal.textContent = '0:00';
+
+      audio.src = track.src;
+      audio.load();
+    }
+
+    /* ==========================================================
+       PLAY
+    ========================================================== */
+    function playTrack() {
+      if (audioFailed) { showFileFallback(); return; }
+
+      const promise = audio.play();
+      if (promise !== undefined) {
+        promise.catch(err => {
+          if (err.name === 'NotSupportedError') {
+            audioFailed = true;
+            showFileFallback();
+          } else if (err.name !== 'AbortError') {
+            showError('Unable to play this song.');
+          }
+        });
+      }
+    }
+
+    /* ==========================================================
+       PAUSE
+    ========================================================== */
+    function pauseTrack() {
+      audio.pause();
+    }
+
+    /* ==========================================================
+       NEXT TRACK
+    ========================================================== */
+    function nextTrack() {
+      if (playlist.length > 1) {
+        currentIndex = (currentIndex + 1) % playlist.length;
+        loadTrack(currentIndex);
+        if (isPlaying) playTrack();
+      } else {
+        audio.currentTime = Math.min(
+          isFinite(audio.duration) ? audio.duration : 0,
+          audio.currentTime + 10
+        );
+      }
+    }
+
+    /* ==========================================================
+       PREVIOUS TRACK
+    ========================================================== */
+    function previousTrack() {
+      if (playlist.length > 1) {
+        currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+        loadTrack(currentIndex);
+        if (isPlaying) playTrack();
+      } else {
+        audio.currentTime = Math.max(0, audio.currentTime - 10);
+      }
+    }
+
+    /* ==========================================================
+       PROGRESS
+    ========================================================== */
+    function updateProgress() {
+      const cur = audio.currentTime;
+      const dur = audio.duration;
+      timeCurrent.textContent = formatTime(cur);
+      if (isFinite(dur) && dur > 0) {
+        const pct = (cur / dur) * 100;
+        progressFill.style.width = `${pct}%`;
+        progressWrap.setAttribute('aria-valuenow', Math.round(pct));
+      }
+    }
+
+    function seek(e) {
+      const rect = progressWrap.getBoundingClientRect();
+      const clickX = (e.type === 'touchstart')
+        ? e.touches[0].clientX - rect.left
+        : e.clientX - rect.left;
+      const pct = Math.max(0, Math.min(1, clickX / rect.width));
+      if (isFinite(audio.duration) && audio.duration > 0) {
+        audio.currentTime = pct * audio.duration;
+      }
+    }
+
+    /* ==========================================================
+       UI STATE
+    ========================================================== */
+    function updatePlayerUI() {
+      if (isPlaying) {
+        playIcon.style.display = 'none';
+        pauseIcon.style.display = '';
+        playBtn.setAttribute('aria-label', 'Pause');
+        albumArt.classList.add('spinning');
+      } else {
+        playIcon.style.display = '';
+        pauseIcon.style.display = 'none';
+        playBtn.setAttribute('aria-label', 'Play');
+        albumArt.classList.remove('spinning');
+      }
+    }
+
+    /* ==========================================================
+       FALLBACK & ERROR
+    ========================================================== */
+    function showFileFallback() { fileFallback.style.display = 'block'; }
+    function hideFileFallback() { fileFallback.style.display = 'none'; }
+
+    function showError(msg) {
+      errorMsg.textContent = msg;
+      errorMsg.style.display = 'block';
+      setTimeout(() => { errorMsg.style.display = 'none'; }, 4000);
+    }
+
+    function hideError() { errorMsg.style.display = 'none'; }
+
+    /* ==========================================================
+       EVENTS — Controls
+    ========================================================== */
+    playBtn.addEventListener('click', () => {
+      isPlaying ? pauseTrack() : playTrack();
+    });
+
+    prevBtn.addEventListener('click', previousTrack);
+    nextBtn.addEventListener('click', nextTrack);
+
+    progressWrap.addEventListener('click', seek);
+    progressWrap.addEventListener('touchstart', seek, { passive: true });
+
+    progressWrap.addEventListener('keydown', (e) => {
+      if (!isFinite(audio.duration)) return;
+      if (e.key === 'ArrowRight') audio.currentTime = Math.min(audio.duration, audio.currentTime + 5);
+      if (e.key === 'ArrowLeft') audio.currentTime = Math.max(0, audio.currentTime - 5);
+    });
+
+    /* ==========================================================
+       EVENTS — Audio
+    ========================================================== */
+    audio.addEventListener('loadedmetadata', () => {
+      timeTotal.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('timeupdate', updateProgress);
+
+    audio.addEventListener('play', () => {
+      isPlaying = true;
+      updatePlayerUI();
+      hideFileFallback();
+      hideError();
+    });
+
+    audio.addEventListener('pause', () => {
+      isPlaying = false;
+      updatePlayerUI();
+    });
+
+    audio.addEventListener('ended', () => {
+      isPlaying = false;
+      updatePlayerUI();
+      if (playlist.length > 1) {
+        currentIndex = (currentIndex + 1) % playlist.length;
+        loadTrack(currentIndex);
+        playTrack();
+      } else {
+        audio.currentTime = 0;
+        progressFill.style.width = '0%';
+        timeCurrent.textContent = '0:00';
+      }
+    });
+
+    audio.addEventListener('error', () => {
+      audioFailed = true;
+    });
+
+    /* ==========================================================
+       FILE INPUT FALLBACK
+    ========================================================== */
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      audio.src = URL.createObjectURL(file);
+      audioFailed = false;
+
+      const name = file.name.replace(/\.[^.]+$/, '');
+      songTitleEl.textContent = name;
+      songArtistEl.textContent = 'Local File';
+
+      audio.load();
+      audio.addEventListener('loadedmetadata', () => { playTrack(); }, { once: true });
+      hideFileFallback();
+    });
+
+    /* ==========================================================
+       INIT
+    ========================================================== */
+    function init() {
+      loadTrack(CONFIG.defaultTrack);
+
+      updateClock();
+      setInterval(updateClock, CONFIG.clockInterval);
+
+      updateOnlineCount();
+      setInterval(updateOnlineCount, CONFIG.onlineInterval);
+    }
+
+    init();
+  </script>
+</body>
+
+</html>
